@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  title: FamilyHistory Epic Api
+  description: FamilyHistory Api
+  version: 0.0.1
+
+paths:
+  /GetAllFamilyHistory:                                                                     # FamilyHistoryDetails
+    get:
+      summary: Get a list of FamilyHistory
+      tags:
+        - FamilyHistory
+      parameters:
+        # - $ref: "#/components/parameters/idParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortByFieldParam"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilyHistoryDetails"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+  /GetFamilyHistory:
+    get:
+      summary: Get a FamilyHistory by Id
+      tags:
+        - FamilyHistory
+      parameters:
+        - $ref: "#/components/parameters/idParam1"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilyHistoryDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+  /FamilyHistoryRegister:
+    post:
+      summary: Create a new FamilyHistory
+      tags:
+        - FamilyHistory
+      parameters:
+        - name: uId
+          in: query
+          description: uId
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilyHistoryDetails"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+  /DeleteFamilyHistory:
+    delete:
+      summary: delete a FamilyHistory by Id
+      tags:
+        - FamilyHistory
+      parameters:
+        - $ref: "#/components/parameters/idParam1"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+
+    idParam:
+      name: patientId
+      in: query
+      required: true
+      schema:
+        type: string
+    idParam1:
+      name: id
+      in: query
+      required: true
+      schema:
+        type: string
+    limitParam:
+      name: Limit
+      in: query
+      required: false
+      schema:
+        type: integer
+    directionParam:
+      name: Direction
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+    sortByFieldParam:
+      name: SortByField
+      in: query
+      required: false
+      schema:
+        type: string
+        nullable: true
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              patientId:
+                type: string
+              message:
+                type: string
+           
+    ResourceNotFoundError:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnAcceptableInputs:
+      description: Invalid Inputs
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+  schemas:
+    MessageDto:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    FamilyHistoryDetails:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FamilyHistoryDto"
+    FamilyHistoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+        Status:
+          type: string
+        resourceType:
+          type: string
+        patientName:
+          type: string
+        patientId:
+          type: string
+        sex:
+          type: string
+        relationship:
+          type: string
+        deceasedBoolean:
+          type: boolean
+        Conditions:
+          type: array
+          items:
+            type: string
+        isExist:
+          type: boolean
+      required:
+        - patientId
